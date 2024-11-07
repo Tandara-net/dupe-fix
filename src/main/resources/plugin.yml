@@ -1,0 +1,8 @@
+name: dupe-fix
+author: tiko
+main: net.tandara.dupefix.DupeFixPlugin
+version: 1.0
+api-version: 1.21
+
+commands:
+  unblockitem:

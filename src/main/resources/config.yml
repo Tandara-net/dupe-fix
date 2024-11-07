@@ -1,0 +1,14 @@
+blocked-materials:
+  - END
+  - SHULKER
+  - SPAWN_EGG
+  - REINFORCED_DEEPSLATE
+  - BARRIER
+  - BEACON
+  - BEDROCK
+  - ELYTRA
+
+webhook-url: "https://discord.com/api/webhooks/1304198568894136352/VaQyefiAeZEThUr5hrdd1qaHpnyTvBynOcbMz7Fkq7rteWZb4CjB8e21OaXwGUmOgWsT"
+
+whitelisted-materials:
+  - ENDER_CHEST
