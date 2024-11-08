@@ -39,10 +39,11 @@ public class DupeFixPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         new UnblockItem(this);
 
         getServer().getPluginManager().registerEvents(new Listener() {
-            /*@EventHandler
+            @EventHandler
             public void handleBlockPlace(BlockPlaceEvent event) {
                 var player = event.getPlayer();
 
@@ -52,7 +53,11 @@ public class DupeFixPlugin extends JavaPlugin {
 
                 var itemStackToBePlaced = event.getItemInHand();
 
-                if (!isUnlocked(itemStackToBePlaced) && (isBlocked(itemStackToBePlaced))) {
+                if (!isBlocked(itemStackToBePlaced)) {
+                    return;
+                }
+
+                if (!isUnlocked(itemStackToBePlaced)) {
                     event.setCancelled(true);
                     createWebHook(player, event.getBlock().getLocation(), new ItemStack[]{itemStackToBePlaced}, "Tried to place a blocked item.");
                     player.sendMessage("§cYou are not allowed to place this item.");
@@ -83,7 +88,6 @@ public class DupeFixPlugin extends JavaPlugin {
                     drops.forEach(item -> event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), item));
                 }
             }
-             */
 
             @EventHandler
             public void handleContainer(InventoryOpenEvent event) {
@@ -243,7 +247,9 @@ public class DupeFixPlugin extends JavaPlugin {
             return false;
         }
 
-        if (itemStack.getItemMeta().getPersistentDataContainer().has(unlocked, PersistentDataType.INTEGER)) {
+        var itemMeta = itemStack.getItemMeta();
+
+        if (itemMeta != null && itemMeta.getPersistentDataContainer().has(unlocked, PersistentDataType.INTEGER)) {
             return false;
         }
 

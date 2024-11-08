@@ -12,3 +12,4 @@ webhook-url: "https://discord.com/api/webhooks/1304198568894136352/VaQyefiAeZETh
 
 whitelisted-materials:
   - ENDER_CHEST
+  - ENDER_PEARL
