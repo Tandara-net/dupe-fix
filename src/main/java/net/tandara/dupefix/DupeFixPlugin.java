@@ -11,15 +11,22 @@ import net.tandara.dupefix.hook.DiscordWebhook;
 import net.tandara.dupefix.hook.DiscordWebhook.EmbedObject;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -35,6 +42,49 @@ public class DupeFixPlugin extends JavaPlugin {
         new UnblockItem(this);
 
         getServer().getPluginManager().registerEvents(new Listener() {
+            /*@EventHandler
+            public void handleBlockPlace(BlockPlaceEvent event) {
+                var player = event.getPlayer();
+
+                if (player.hasPermission("dupefix.bypass")) {
+                    return;
+                }
+
+                var itemStackToBePlaced = event.getItemInHand();
+
+                if (!isUnlocked(itemStackToBePlaced) && (isBlocked(itemStackToBePlaced))) {
+                    event.setCancelled(true);
+                    createWebHook(player, event.getBlock().getLocation(), new ItemStack[]{itemStackToBePlaced}, "Tried to place a blocked item.");
+                    player.sendMessage("§cYou are not allowed to place this item.");
+                    return;
+                }
+
+                 setUnlockedMeta(event.getBlock());
+            }
+
+            @EventHandler
+            public void handleBlockBreak(BlockBreakEvent event) {
+                var player = event.getPlayer();
+
+                if (player.hasPermission("dupefix.bypass")) {
+                    return;
+                }
+
+                if (hasBlockedMeta(event.getBlock())) {
+                    event.setCancelled(true);
+                    createWebHook(player, event.getBlock().getLocation(), new ItemStack[]{}, "Tried to break a block with a blocked item in it.");
+                    player.sendMessage("§cYou are not allowed to break this block.");
+                } else {
+                    var drops = event.getBlock().getDrops();
+
+                    event.setDropItems(false);
+
+                    drops.forEach(item -> unblockItem(item));
+                    drops.forEach(item -> event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), item));
+                }
+            }
+             */
+
             @EventHandler
             public void handleContainer(InventoryOpenEvent event) {
                 var player = event.getPlayer();
@@ -204,6 +254,33 @@ public class DupeFixPlugin extends JavaPlugin {
         }
 
         return false;
+    }
+
+    private void setUnlockedMeta(Block block) {
+        BlockState blockState = block.getState();
+
+        if (blockState instanceof TileState tileState) {
+            PersistentDataContainer dataContainer = tileState.getPersistentDataContainer();
+            dataContainer.set(unlocked, PersistentDataType.INTEGER, 1);
+            tileState.update();
+        } else {
+            block.setMetadata("unlocked", new FixedMetadataValue(this, 1));
+        }
+    }
+
+    private boolean hasBlockedMeta(Block block) {
+        BlockState blockState = block.getState();
+
+        if (blockState instanceof TileState tileState) {
+            PersistentDataContainer dataContainer = tileState.getPersistentDataContainer();
+            return dataContainer.has(unlocked, PersistentDataType.INTEGER);
+        }
+
+        return block.hasMetadata("unlocked");
+    }
+
+    public boolean isUnlocked(ItemStack itemStack) {
+        return itemStack.getItemMeta().getPersistentDataContainer().has(unlocked, PersistentDataType.INTEGER);
     }
 
     public void unblockItem(ItemStack itemStack) {
