@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.awt.Color;
 
 import java.util.List;
+
 import net.tandara.dupefix.command.UnblockItem;
 import net.tandara.dupefix.hook.DiscordWebhook;
 import net.tandara.dupefix.hook.DiscordWebhook.EmbedObject;
@@ -72,7 +73,7 @@ public class DupeFixPlugin extends JavaPlugin {
                     }
                     event.setCancelled(true);
                     createWebHook(player, event.getBlock().getLocation(), new ItemStack[]{itemStackToBePlaced},
-                        "Tried to place a blocked item.");
+                            "Tried to place a blocked item.");
                     player.sendMessage("§cYou are not allowed to place this item.");
                 }
             }
@@ -91,6 +92,8 @@ public class DupeFixPlugin extends JavaPlugin {
                     return;
                 }
 
+                // TODO: Check if block breaks because of shop --> chest shouldn't be dropped
+
                 if (hasUnblockedMeta(event.getBlock())) {
                     // Item is unblocked
                     ItemStack itemStack = new ItemStack(event.getBlock().getType());
@@ -104,7 +107,7 @@ public class DupeFixPlugin extends JavaPlugin {
 
                         event.getBlock().setType(Material.AIR);
                         drops.forEach(
-                            item -> event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), item)
+                                item -> event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), item)
                         );
 
                         return;
@@ -123,21 +126,17 @@ public class DupeFixPlugin extends JavaPlugin {
                         event.setCancelled(true);
                         event.setDropItems(false);
                         createWebHook(player, event.getBlock().getLocation(), new ItemStack[]{},
-                            "Tried to break a block with a blocked item in it.");
+                                "Tried to break a block with a blocked item in it.");
                         player.sendMessage("§cYou are not allowed to break this block.");
                     } else {
 //                        var drops = event.getBlock().getDrops();
                         var dropList = event.getBlock().getDrops(event.getPlayer().getInventory().getItemInMainHand());
                         var drops = new ArrayList<>(dropList);
 
-                        System.out.println("drops = " + drops);
-
                         event.setDropItems(false);
 
                         // Add Inventory content to drop items
                         if (event.getBlock().getState() instanceof Container container) {
-                            System.out.println(
-                                "container.getInventory().getType() = " + container.getInventory().getType());
                             if (whitelistedInventories.contains(container.getInventory().getType())) {
                                 return;
                             }
@@ -155,7 +154,7 @@ public class DupeFixPlugin extends JavaPlugin {
                             if (isBlocked(item)) {
                                 player.sendMessage("§cSuspicious item blocked.");
                                 createWebHook(player, event.getBlock().getLocation(), new ItemStack[]{item},
-                                    "Tried to break a block with a blocked item in it.");
+                                        "Tried to break a block with a blocked item in it.");
                                 // TODO: Change this later maybe if only good items exist anymore
                                 return false;
                             }
@@ -164,7 +163,7 @@ public class DupeFixPlugin extends JavaPlugin {
 
                         // Drop all items that are not blocked
                         drops.forEach(item -> event.getBlock().getWorld()
-                            .dropItemNaturally(event.getBlock().getLocation(), item));
+                                .dropItemNaturally(event.getBlock().getLocation(), item));
                     }
                 }
             }
@@ -187,10 +186,10 @@ public class DupeFixPlugin extends JavaPlugin {
                     if (isBlocked(itemStacks)) {
                         event.setCancelled(true);
                         createWebHook((Player) player,
-                            event.getInventory().getLocation() != null
-                                ? event.getInventory().getLocation()
-                                : player.getLocation(), contents,
-                            "Tried to open a container with a blocked item in it."
+                                event.getInventory().getLocation() != null
+                                        ? event.getInventory().getLocation()
+                                        : player.getLocation(), contents,
+                                "Tried to open a container with a blocked item in it."
                         );
                         player.sendMessage("§cYou are not allowed to open this container with this item in it.");
                         // Lock container
@@ -211,7 +210,7 @@ public class DupeFixPlugin extends JavaPlugin {
                 if (isBlocked(itemStack)) {
                     event.setCancelled(true);
                     createWebHook(player, event.getItem().getLocation(), new ItemStack[]{itemStack},
-                        "Tried to pick up a blocked item.");
+                            "Tried to pick up a blocked item.");
                     player.sendMessage("§cYou are not allowed to pick up this item.");
                 }
             }
@@ -226,7 +225,7 @@ public class DupeFixPlugin extends JavaPlugin {
                 }
 
                 if (event.getCause() == PlayerPortalEvent.TeleportCause.NETHER_PORTAL
-                    || event.getCause() == PlayerPortalEvent.TeleportCause.END_PORTAL) {
+                        || event.getCause() == PlayerPortalEvent.TeleportCause.END_PORTAL) {
                     event.setCancelled(true);
                     createEndWebHook(player);
                 }
@@ -262,18 +261,18 @@ public class DupeFixPlugin extends JavaPlugin {
         webhook.setAvatarUrl("https://i.ibb.co/FVq0Frm/tandara.jpg");
         webhook.setUsername("End-Detector 3000");
         webhook.addEmbed(new EmbedObject()
-            .setTitle("End-Detector 3000")
-            .setDescription("Tried to enter the end.")
-            .setColor(Color.decode("#00cccc"))
-            .addField("Spieler", player.getName(), false)
-            .addField("Welt", player.getWorld().getName(), false)
-            .addField("X", String.valueOf(player.getLocation().getBlockX()), false)
-            .addField("Y", String.valueOf(player.getLocation().getBlockY()), false)
-            .addField("Z", String.valueOf(player.getLocation().getBlockZ()), false)
-            .setFooter(
-                "End-Detector 3000 | " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
-                "https://i.ibb.co/FVq0Frm/tandara.jpg"
-            )
+                .setTitle("End-Detector 3000")
+                .setDescription("Tried to enter the end.")
+                .setColor(Color.decode("#00cccc"))
+                .addField("Spieler", player.getName(), false)
+                .addField("Welt", player.getWorld().getName(), false)
+                .addField("X", String.valueOf(player.getLocation().getBlockX()), false)
+                .addField("Y", String.valueOf(player.getLocation().getBlockY()), false)
+                .addField("Z", String.valueOf(player.getLocation().getBlockZ()), false)
+                .setFooter(
+                        "End-Detector 3000 | " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
+                        "https://i.ibb.co/FVq0Frm/tandara.jpg"
+                )
         );
     }
 
@@ -285,17 +284,17 @@ public class DupeFixPlugin extends JavaPlugin {
         final var userName = player.getName();
 
         var blockedItems = Arrays.stream(itemStacks)
-            .filter(this::isBlocked)
-            .map(itemStack -> itemStack.getType().name())
-            .toList();
+                .filter(this::isBlocked)
+                .map(itemStack -> itemStack.getType().name())
+                .toList();
 
         getServer().getOnlinePlayers().forEach(admin -> {
             if (admin.hasPermission("dupefix.notify")) {
                 admin.sendMessage("§cA player tried to open a container / pick up a blocked item!");
                 admin.sendMessage("§cWorld: " + player.getWorld().getName());
                 admin.sendMessage(
-                    "§cWhere? " + player.getLocation().getBlockX() + " " + player.getLocation().getBlockY() + " "
-                        + player.getLocation().getBlockZ()
+                        "§cWhere? " + player.getLocation().getBlockX() + " " + player.getLocation().getBlockY() + " "
+                                + player.getLocation().getBlockZ()
                 );
                 admin.sendMessage("§cWho? " + player.getName());
                 admin.sendMessage("§cWhat? " + String.join(", ", blockedItems));
@@ -305,19 +304,19 @@ public class DupeFixPlugin extends JavaPlugin {
         webhook.setAvatarUrl("https://i.ibb.co/FVq0Frm/tandara.jpg");
         webhook.setUsername("Dupe-Detector 3000");
         webhook.addEmbed(new EmbedObject()
-            .setTitle("Dupe-Detector 3000")
-            .setDescription(type)
-            .setColor(Color.decode("#00cccc"))
-            .addField("Spieler", userName, false)
-            .addField("Welt", location.getWorld().getName(), false)
-            .addField("X", String.valueOf(location.getBlockX()), false)
-            .addField("Y", String.valueOf(location.getBlockY()), false)
-            .addField("Z", String.valueOf(location.getBlockZ()), false)
-            .addField("Gefundene Items", String.join(", ", blockedItems), false)
-            .setFooter("Dupe-Detector 3000 | " + LocalDateTime.now()
-                    .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
-                "https://i.ibb.co/FVq0Frm/tandara.jpg"
-            )
+                .setTitle("Dupe-Detector 3000")
+                .setDescription(type)
+                .setColor(Color.decode("#00cccc"))
+                .addField("Spieler", userName, false)
+                .addField("Welt", location.getWorld().getName(), false)
+                .addField("X", String.valueOf(location.getBlockX()), false)
+                .addField("Y", String.valueOf(location.getBlockY()), false)
+                .addField("Z", String.valueOf(location.getBlockZ()), false)
+                .addField("Gefundene Items", String.join(", ", blockedItems), false)
+                .setFooter("Dupe-Detector 3000 | " + LocalDateTime.now()
+                                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
+                        "https://i.ibb.co/FVq0Frm/tandara.jpg"
+                )
         );
 
         try {
