@@ -1,6 +1,9 @@
 
+^	java:S125"<This block of commented-out lines of code should be removed.(ÓœüËıÿÿÿÿ8‘¤àó°2
+U
+java:S1135Ÿ"2Complete the task associated to this TODO comment.(û¾§õøÿÿÿÿ8•¤àó°2
 |
-java:S3252“"YUse static access with "org.bukkit.event.player.PlayerTeleportEvent" for "TeleportCause".(¤ÖÚïùÿÿÿÿ8ÓÎÈ°2
+java:S3252ä"YUse static access with "org.bukkit.event.player.PlayerTeleportEvent" for "TeleportCause".(¤ÖÚïùÿÿÿÿ8›¤àó°2
 |
-java:S3252”"YUse static access with "org.bukkit.event.player.PlayerTeleportEvent" for "TeleportCause".(¬¶°ıÿÿÿÿ8ÓÎÈ°2
-F	java:S108ñ")Either remove or fill this block of code.(±œ§•8ªÓÎÈ°2
+java:S3252å"YUse static access with "org.bukkit.event.player.PlayerTeleportEvent" for "TeleportCause".(¬¶°ıÿÿÿÿ8œ¤àó°2
+F	java:S108Å")Either remove or fill this block of code.(±œ§•8®¤àó°2
